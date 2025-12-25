@@ -26,11 +26,11 @@ function Navbar() {
 
           <XIcon onClick={()=>setIsOpen(!isOpen)} className="md:hidden w-6 h-6 absolute top-6 right-6  cursor-pointer" />
 
-          <Link onClick={()=>{scrollTo(0,0), setIsOpen(false)}}  to="/" className='mx-4 text-lg font-medium hover:text-primary transition '>Home</Link>
-          <Link onClick={()=>{scrollTo(0,0), setIsOpen(false)}} to="/movies" className='mx-4 text-lg font-medium hover:text-primary transition '>Movies</Link>
-          <Link onClick={()=>{scrollTo(0,0), setIsOpen(false)}} to="/theaters" className='mx-4 text-lg font-medium hover:text-primary transition '>Theaters</Link>
-          <Link onClick={()=>{scrollTo(0,0), setIsOpen(false)}} to="/releases" className='mx-4 text-lg font-medium hover:text-primary transition '>Releases</Link>
-          <Link to="/favorite" className='mx-4 text-lg font-medium hover:text-primary transition'>Favorites</Link>
+          <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}}  to="/" className='mx-4 text-lg font-medium hover:text-primary transition '>Home</Link>
+          <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/movies" className='mx-4 text-lg font-medium hover:text-primary transition '>Movies</Link>
+          <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/theaters" className='mx-4 text-lg font-medium hover:text-primary transition '>Theaters</Link>
+          <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/releases" className='mx-4 text-lg font-medium hover:text-primary transition '>Releases</Link>
+          <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/favorite" className='mx-4 text-lg font-medium hover:text-primary transition'>Favorites</Link>
 
         </div>
 
