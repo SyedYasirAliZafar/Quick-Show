@@ -16,7 +16,7 @@ function DateSelect({ dateTime, id }) {
             return toast("Please select a date")
         }
 
-        navigate(`/movie/${id}/${selected}`)
+        navigate(`/movies/${id}/${selected}`)
         scrollTo(0,0)
 
     }
