@@ -12,7 +12,7 @@ import Footer from "./components/Footer";
 import Layout from "./pages/admin/Layout";
 import Dashboard from "./pages/admin/Dashboard";
 import AddShow from "./pages/admin/AddShow";
-import ListShow from "./pages/admin/ListShow";
+import ListShows from "./pages/admin/ListShows";
 import ListBooking from "./pages/admin/ListBooking";
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
         <Route path="/admin/*" element={<Layout/>}>
           <Route index element={<Dashboard/>}/>
           <Route path="add-shows" element={<AddShow/>}/>
-          <Route path="list-shows" element={<ListShow/>}/>
+          <Route path="list-shows" element={<ListShows/>}/>
           <Route path="list-bookings" element={<ListBooking/>}/>
         </Route>
 
