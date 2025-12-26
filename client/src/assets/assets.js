@@ -296,7 +296,7 @@ export const dummyBookingData = [
         "user": { "name": "GreatStack", },
         "show": {
             _id: "68352363e96d99513e4221a4",
-            movie: dummyShowsData[0],
+            movie: dummyShowsData[3],
             showDateTime: "2025-06-30T02:30:00.000Z",
             showPrice: 59,
         },
@@ -322,7 +322,7 @@ export const dummyBookingData = [
         "user": { "name": "GreatStack", },
         "show": {
             _id: "68352363e96d99513e4221a4",
-            movie: dummyShowsData[0],
+            movie: dummyShowsData[1],
             showDateTime: "2025-06-30T02:30:00.000Z",
             showPrice: 59,
         },
