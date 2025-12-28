@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    id: {
+    _id: {
         type: String,
         required: true
     },
@@ -20,4 +20,4 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-export  const User = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
