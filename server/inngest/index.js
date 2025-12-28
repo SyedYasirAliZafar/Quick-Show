@@ -10,22 +10,16 @@ const syncUserCreation = inngest.createFunction(
   { id: "sync-user-from-clerk" },
   { event: "clerk/user.created" },
   async ({ event }) => {
-    const { id, first_name, last_name, email_addresses, image_url } = event.data;
-
+    const {id, first_name, last_name, email_addresses, image_url } = event.data
     const userData = {
-      _id: id,
-      email: email_addresses[0].email_address,
-      name: `${first_name} ${last_name}`,
-      image: image_url,
-    };
-
-    await User.create(userData);
-
-    // ✅ REQUIRED
-    return { success: true };
-  }
+        _id: id,
+        email: email_addresses[0].email_address,
+        name: first_name + " " + last_name,
+        image: image_url
+    } 
+    await User.create(userData)
+  },
 );
-
 
 
 // Delete Function
@@ -34,16 +28,11 @@ const syncUserDeletion = inngest.createFunction(
   { id: "delete-user-with-clerk" },
   { event: "clerk/user.deleted" },
   async ({ event }) => {
-    await connectDB(); // ✅ REQUIRED
-
-    const { id } = event.data;
-    await User.findByIdAndDelete(id);
-
-    return { success: true };
-  }
+    
+    const {id} = event.data
+    await User.findByIdAndDelete(id)
+  },
 );
-
-
 
 // Update Function
 
@@ -51,21 +40,16 @@ const syncUserUpdation = inngest.createFunction(
   { id: "update-user-from-clerk" },
   { event: "clerk/user.updated" },
   async ({ event }) => {
-    const { id, first_name, last_name, email_addresses, image_url } = event.data;
-
-    const userData = {
-      email: email_addresses[0].email_address,
-      name: `${first_name} ${last_name}`,
-      image: image_url,
-    };
-
-    await User.findByIdAndUpdate(id, userData);
-
-    // ✅ REQUIRED
-    return { success: true };
-  }
+    const {id, first_name, last_name, email_addresses, image_url } = event.data  
+     const userData = {
+        _id: id,
+        email: email_addresses[0].email_address,
+        name: first_name + " " + last_name,
+        image: image_url
+    } 
+    await User.findByIdAndUpdate(id, userData)
+  },
 );
-
 
 // Create an empty array where we'll export future Inngest functions
 export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation];

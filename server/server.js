@@ -11,7 +11,7 @@ dotenv.config()
 const app = express()
 
 // MongoDB Connected
-await connectDB()
+connectDB()
 
 // Allowed Frontend Origins
 const allowedOrigins = ["http://localhost:5173"]
