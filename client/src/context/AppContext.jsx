@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -6,95 +6,120 @@ import toast from "react-hot-toast";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
-export const AppContext = createContext();
+export const AppContext = createContext(null);
 
 export const AppProvider = ({ children }) => {
-  const { isAdmin, setIsAdmin } = useState(false);
-  const { shows, setShows } = useState([]);
-  const { favoriteMovies, setFavoriteMovies } = useState([]);
+  /* ---------------- STATE ---------------- */
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [shows, setShows] = useState([]);
+  const [favoriteMovies, setFavoriteMovies] = useState([]);
 
-  const { user } = useUser();
-  const { getToken } = useAuth();
-  const { location } = useLocation();
+  /* ---------------- CLERK ---------------- */
+  const { user, isLoaded } = useUser();
+  const { isSignedIn, getToken } = useAuth();
 
+  /* ---------------- ROUTER ---------------- */
+  const location = useLocation();
   const navigate = useNavigate();
 
+    useEffect(() => {
+    console.log("CLERK LOADED:", isLoaded);
+    console.log("SIGNED IN:", isSignedIn);
+    console.log("USER ID:", user?.id);
+    console.log("CURRENT PATH:", location.pathname);
+  }, [isLoaded, isSignedIn, user?.id, location.pathname]);
+
+  /* ---------------- ADMIN CHECK ---------------- */
   const fetchIsAdmin = async () => {
     try {
+      if (!user?.id) return;
+
+      const token = await getToken();
+      if (!token) return;
+
       const { data } = await axios.get("/api/admin/is-admin", {
-        headers: { Authorization: `Bearer ${await getToken()}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
+
       setIsAdmin(data.isAdmin);
 
-      if (!data.isAdmin && location.pathname.startsWith("/admin")) {
+      // ❌ non-admin accessing admin routes
+      if (data.isAdmin && location.pathname.startsWith("/admin")) {
         navigate("/");
         toast.error("You are not Authorized to access admin dashboard");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Admin check error:", error);
     }
   };
 
+  /* ---------------- SHOWS (PUBLIC) ---------------- */
   const fetchShows = async () => {
     try {
       const { data } = await axios.get("/api/show/all");
       if (data.success) {
         setShows(data.shows);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Fetch shows error:", error);
     }
   };
 
-  const fetchfavoriteMovies = async () => {
+  /* ---------------- FAVORITES ---------------- */
+  const fetchFavoriteMovies = async () => {
     try {
+      if (!user?.id) return;
+
+      const token = await getToken();
+      if (!token) return;
+
       const { data } = await axios.get("/api/user/favorites", {
-        headers: { Authorization: `Bearer ${await getToken()}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (data.success) {
         setFavoriteMovies(data.movies);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Favorites error:", error);
     }
   };
 
+  /* ---------------- EFFECTS ---------------- */
+
+  // Public data (no login needed)
   useEffect(() => {
     fetchShows();
   }, []);
 
+  // Protected data (login + clerk fully ready)
   useEffect(() => {
-    if (user) {
+    if (isLoaded && isSignedIn && user?.id) {
       fetchIsAdmin();
-      fetchfavoriteMovies();
+      fetchFavoriteMovies();
     }
-  }, [user]);
+  }, [isLoaded, isSignedIn, user?.id, location.pathname]);
 
+  /* ---------------- CONTEXT VALUE ---------------- */
   const value = {
-    axios,
     isAdmin,
-    setIsAdmin,
     shows,
-    setShows,
     favoriteMovies,
-    setFavoriteMovies,
     fetchShows,
     fetchIsAdmin,
-    fetchfavoriteMovies,
+    fetchFavoriteMovies,
     user,
-    getToken,
     navigate,
-    
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
+/* ---------------- CUSTOM HOOK ---------------- */
 export const useAppContext = () => {
-  useAppContext(AppContext);
+  return useContext(AppContext);
 };

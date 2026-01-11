@@ -6,7 +6,7 @@ export const getUserBookings = async (req, res) => {
   try {
     const { userId } = req.auth();
 
-    const bookings = await Booking.find({ user })
+    const bookings = await Booking.find({ user: userId })
       .populate({
         path: "show",
         populate: { path: "movie" },
@@ -19,6 +19,7 @@ export const getUserBookings = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
 
 // update fav movie to clerk metadata
 
@@ -53,14 +54,28 @@ export const updateFavorite = async (req, res) => {
 
 export const getFavorites = async (req, res) => {
   try {
-    const user = await clerkClient.users.getUser(req.auth().userId);
-    const favorites = user.privateMetadata.favorites;
+    const { userId } = req.auth(); // ✅ FUNCTION CALL (CORRECT)
 
-    const movies = await Movie.find({ _id: { $in: favorites } });
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const user = await clerkClient.users.getUser(userId);
+
+    const favorites = user.privateMetadata?.favorites || [];
+
+    const movies = await Movie.find({
+      _id: { $in: favorites },
+    });
 
     res.json({ success: true, movies });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: error.message });
+    console.error("Favorites error:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
